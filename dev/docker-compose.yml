@@ -1,0 +1,18 @@
+name: my_money
+
+services:
+  my_money_db:
+    container_name: "my-money-db"
+    image: "postgres:15.6"
+    environment:
+      POSTGRES_DB: "mymoney"
+      POSTGRES_USER: "local"
+      POSTGRES_PASSWORD: "local"
+    ports:
+      - "15438:5432"
+
+  my_money_telegram_contexts:
+    container_name: "my_money_telegram_contexts"
+    image: "redis:7.2.4"
+    ports:
+      - "16379:6379"

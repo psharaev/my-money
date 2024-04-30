@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ru.psharaev.mymoney</groupId>
+    <artifactId>my-money</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>my-money-app</module>
+        <module>my-money-core</module>
+        <module>my-money-rest</module>
+        <module>my-money-rest-api</module>
+        <module>my-money-telegram-bot</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <dep.spring-boot.version>3.2.4</dep.spring-boot.version>
+        <dep.lombok.version>1.18.30</dep.lombok.version>
+        <dep.hibernate-core.version>6.4.4.Final</dep.hibernate-core.version>
+        <dep.hibernate-validator.version>8.0.1.Final</dep.hibernate-validator.version>
+        <dep.swagger-annotations.version>2.2.20</dep.swagger-annotations.version>
+        <dep.guava.version>32.0.0-jre</dep.guava.version>
+        <dep.postgresql.version>42.7.3</dep.postgresql.version>
+
+        <dep.flyway.version>10.7.2</dep.flyway.version>
+        <dep.telegrambots.version>7.2.1</dep.telegrambots.version>
+        <dep.okhttp.version>4.12.0</dep.okhttp.version>
+        <dep.maven-dependency-plugin.version>3.6.1</dep.maven-dependency-plugin.version>
+        <dep.maven-compiler-plugin.version>3.13.0</dep.maven-compiler-plugin.version>
+        <dep.springdoc-openapi-starter-webmvc-ui.version>2.5.0</dep.springdoc-openapi-starter-webmvc-ui.version>
+        <dep.EvalEx.version>3.2.0</dep.EvalEx.version>
+        <dep.jedis.version>5.1.2</dep.jedis.version>
+        <dep.jackson-datatype-jsr310.version>2.17.0</dep.jackson-datatype-jsr310.version>
+        <dep.jackson-datatype-jdk8.version>2.16.1</dep.jackson-datatype-jdk8.version>
+        <dep.jackson-module-parameter-names.version>2.17.0</dep.jackson-module-parameter-names.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${dep.spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ezylang</groupId>
+                <artifactId>EvalEx</artifactId>
+                <version>${dep.EvalEx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${dep.jackson-datatype-jdk8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${dep.jackson-module-parameter-names.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${dep.jackson-datatype-jsr310.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${dep.guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${dep.okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${dep.swagger-annotations.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${dep.flyway.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${dep.flyway.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${dep.hibernate-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${dep.hibernate-validator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${dep.lombok.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${dep.springdoc-openapi-starter-webmvc-ui.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots-client</artifactId>
+                <version>${dep.telegrambots.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots-extensions</artifactId>
+                <version>${dep.telegrambots.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots-longpolling</artifactId>
+                <version>${dep.telegrambots.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots-webhook</artifactId>
+                <version>${dep.telegrambots.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${dep.jedis.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.ekryd.sortpom</groupId>
+                    <artifactId>sortpom-maven-plugin</artifactId>
+                    <version>3.4.1</version>
+                    <configuration>
+                        <createBackupFile>false</createBackupFile>
+                        <nrOfIndentSpace>4</nrOfIndentSpace>
+                        <sortModules>true</sortModules>
+                        <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                        <sortDependencyExclusions>groupId,artifactId</sortDependencyExclusions>
+                        <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                        <expandEmptyElements>false</expandEmptyElements>
+                        <verifyFailOn>Strict</verifyFailOn>
+                        <verifyFail>Stop</verifyFail>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                            <phase>validate</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${dep.maven-dependency-plugin.version}</version>
+                <!--                <executions>-->
+                <!--                    <execution>-->
+                <!--                        <id>analyze</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>analyze-only</goal>-->
+                <!--                        </goals>-->
+                <!--                        <configuration>-->
+                <!--                            <failOnWarning>true</failOnWarning>-->
+                <!--                        </configuration>-->
+                <!--                    </execution>-->
+                <!--                </executions>-->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${dep.maven-compiler-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>com.github.ekryd.sortpom</groupId>
+                <artifactId>sortpom-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
