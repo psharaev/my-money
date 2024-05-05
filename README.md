@@ -1,3 +1,3 @@
 # Мои деньги
 
-Телеграм бот [@where_my_moneybot](https://t.me/where_my_moneybot)
+Телеграм бот [@help_my_money_bot](https://t.me/help_my_money_bot)
