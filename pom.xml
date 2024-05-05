@@ -23,20 +23,25 @@
 
         <dep.spring-boot.version>3.2.4</dep.spring-boot.version>
         <dep.lombok.version>1.18.30</dep.lombok.version>
-        <dep.hibernate-core.version>6.4.4.Final</dep.hibernate-core.version>
-        <dep.hibernate-validator.version>8.0.1.Final</dep.hibernate-validator.version>
         <dep.swagger-annotations.version>2.2.20</dep.swagger-annotations.version>
         <dep.guava.version>32.0.0-jre</dep.guava.version>
+        <dep.telegrambots.version>7.2.1</dep.telegrambots.version>
+
         <dep.postgresql.version>42.7.3</dep.postgresql.version>
+        <dep.jedis.version>5.1.2</dep.jedis.version>
+
+        <dep.hibernate-core.version>6.4.4.Final</dep.hibernate-core.version>
+        <dep.hibernate-validator.version>8.0.1.Final</dep.hibernate-validator.version>
 
         <dep.flyway.version>10.7.2</dep.flyway.version>
-        <dep.telegrambots.version>7.2.1</dep.telegrambots.version>
         <dep.okhttp.version>4.12.0</dep.okhttp.version>
+
         <dep.maven-dependency-plugin.version>3.6.1</dep.maven-dependency-plugin.version>
         <dep.maven-compiler-plugin.version>3.13.0</dep.maven-compiler-plugin.version>
+
         <dep.springdoc-openapi-starter-webmvc-ui.version>2.5.0</dep.springdoc-openapi-starter-webmvc-ui.version>
         <dep.EvalEx.version>3.2.0</dep.EvalEx.version>
-        <dep.jedis.version>5.1.2</dep.jedis.version>
+
         <dep.jackson-datatype-jsr310.version>2.17.0</dep.jackson-datatype-jsr310.version>
         <dep.jackson-datatype-jdk8.version>2.16.1</dep.jackson-datatype-jdk8.version>
         <dep.jackson-module-parameter-names.version>2.17.0</dep.jackson-module-parameter-names.version>
@@ -62,14 +67,14 @@
                 <version>${dep.jackson-datatype-jdk8.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-parameter-names</artifactId>
-                <version>${dep.jackson-module-parameter-names.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${dep.jackson-datatype-jsr310.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${dep.jackson-module-parameter-names.version}</version>
             </dependency>
 
             <dependency>
