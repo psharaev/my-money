@@ -13,6 +13,9 @@ import ru.psharaev.mymoney.core.AccountService;
 import ru.psharaev.mymoney.core.entity.Account;
 
 import java.util.List;
+import java.util.Optional;
+
+import static ru.psharaev.mymoney.bot.view.StartView.FAVORITE_ACCOUNT_STAR;
 
 @Slf4j
 @Component
@@ -75,8 +78,9 @@ public class FlowView extends AbstractView<FlowContext> {
 
         sb.append("💳Счёт: ");
         Account account = accountService.getAccount(context.getAccountId());
-        if (context.isFavoriteAccount()) {
-            sb.append("⭐");
+        Optional<Long> favoriteAccountIdOptional = accountService.getFavoriteAccountId(context.getUserId());
+        if (favoriteAccountIdOptional.isPresent() && favoriteAccountIdOptional.get().equals(context.getAccountId())) {
+            sb.append(FAVORITE_ACCOUNT_STAR);
         }
         sb.append(account.getName());
         sb.append("\n");
@@ -88,7 +92,7 @@ public class FlowView extends AbstractView<FlowContext> {
         }
 
         sb.append(Parser.formatAmount(context.getAmount().abs()));
-        sb.append((context.getCurrencySymbol()));
+        sb.append(account.getCurrency().getCurrencySymbol());
         sb.append("\n");
 
         sb.append(Formatter.getEmojiTime(context.getTime().toZonedDateTime()));

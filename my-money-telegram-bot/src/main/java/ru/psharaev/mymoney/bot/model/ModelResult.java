@@ -14,6 +14,7 @@ import java.util.Objects;
 public class ModelResult<T extends Context> {
     private static final ModelResult<Context> NOT_CHANGED = new ModelResult<>(null, Result.NOT_CHANGED);
     private static final ModelResult<Context> DELETE_CONTEXT = new ModelResult<>(null, Result.DELETE_CONTEXT);
+    private static final ModelResult<Context> OOPS = new ModelResult<>(null, Result.OOPS);
 
     private final T context;
     @Getter
@@ -54,6 +55,13 @@ public class ModelResult<T extends Context> {
         return DELETE_CONTEXT;
     }
 
+    /**
+     * Упс! Пользователь нашёл не написанную часть логики
+     */
+    public static ModelResult<Context> oopsImpossible() {
+        return OOPS;
+    }
+
     public T getContext() {
         if (context == null) {
             throw new NoSuchElementException("No context present");
@@ -66,6 +74,7 @@ public class ModelResult<T extends Context> {
         EDIT_MESSAGE,
         REPLACE_CONTEXT,
         NOT_CHANGED,
-        DELETE_CONTEXT
+        DELETE_CONTEXT,
+        OOPS
     }
 }

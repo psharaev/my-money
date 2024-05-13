@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @Component
 public class Presenter {
     public static final String OOPS_I_DONT_KNOW = "Упс! Я не знаю что от меня ожидалось как насчёт /start?";
-    public static final String OOPS_DEVELOPER_STUPID = "Упс! Я не знаю что от меня ожидалось как насчёт /start?";
     public static final String OOPS_IMPOSSIBLE = "Упс! Я думал данное состояние невозможно, но ты это сделал🎉 Я не знаю как мне реагировать на твоё действие, похоже это просто не работает";
 
     private final TelegramClient telegramClient;
@@ -143,6 +142,9 @@ public class Presenter {
                 case DELETE_CONTEXT -> {
                     contextRepository.delete(chatId);
                 }
+                case OOPS -> {
+                    sendText(chatId, Presenter.OOPS_IMPOSSIBLE);
+                }
             }
         } catch (TelegramApiException e) {
             log.error("Fail send rendered context", e);
@@ -186,7 +188,7 @@ public class Presenter {
                 handleCallback(update);
             } catch (Exception e) {
                 log.error("Fail handleCallback", e);
-                sendText(update.getMessage().getChatId(), "Ой, я сломался😢");
+                sendText(update.getCallbackQuery().getMessage().getChatId(), "Ой, я сломался😢");
             }
         } else {
             handleUnexpectedState(update);

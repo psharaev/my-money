@@ -9,6 +9,8 @@ public enum Currency {
     // TODO use java.util.Currency
     RUB("RUB", 643, "₽"),
     USD("USD", 840, "$"),
+    EUR("EUR", 978, "€"),
+    CNY("CNY", 156, "¥"),
     HKD("HKD", 344, "HK$");
 
     /**

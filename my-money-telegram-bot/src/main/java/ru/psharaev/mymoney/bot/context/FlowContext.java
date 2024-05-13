@@ -1,7 +1,6 @@
 package ru.psharaev.mymoney.bot.context;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,10 +17,7 @@ public class FlowContext implements Context {
     private int messageId;
 
     private long accountId;
-    @JsonProperty("isFavoriteAccount")
-    private boolean isFavoriteAccount;
     private BigDecimal amount;
-    private String currencySymbol;
     private OffsetDateTime time;
     private String category;
     private String description;

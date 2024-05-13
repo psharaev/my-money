@@ -1,26 +1,36 @@
 package ru.psharaev.mymoney.bot.model;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.psharaev.mymoney.bot.model.command.StartCommand;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.psharaev.mymoney.bot.Presenter;
 import ru.psharaev.mymoney.bot.context.Context;
 import ru.psharaev.mymoney.bot.context.FlowContext;
 import ru.psharaev.mymoney.bot.context.StartContext;
+import ru.psharaev.mymoney.bot.model.command.StartCommand;
 import ru.psharaev.mymoney.bot.util.Parser;
-import ru.psharaev.mymoney.core.exception.MymoneyUserBadArgumentsException;
+import ru.psharaev.mymoney.core.AccountService;
 import ru.psharaev.mymoney.core.FlowService;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ru.psharaev.mymoney.core.entity.Account;
+import ru.psharaev.mymoney.core.exception.MymoneyUserBadArgumentsException;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static ru.psharaev.mymoney.bot.model.FlowModel.Callback.*;
 import static ru.psharaev.mymoney.bot.model.ModelResult.notChanged;
+import static ru.psharaev.mymoney.bot.view.StartView.FAVORITE_ACCOUNT_STAR;
 
 @Slf4j
 @Component
@@ -28,6 +38,7 @@ public final class FlowModel extends AbstractModel<FlowContext> {
     public enum Callback {
         CHANGE_SIGN,
         CHANGE_ACCOUNT,
+        SET_ACCOUNT,
         ENTER_TIME,
         ENTER_CATEGORY,
         ENTER_DESCRIPTION,
@@ -37,16 +48,20 @@ public final class FlowModel extends AbstractModel<FlowContext> {
 
     private final FlowService flowService;
     private final StartCommand startCommand;
+    private final AccountService accountService;
 
-    public FlowModel(TelegramClient telegramClient, FlowService flowService, StartCommand startCommand) {
+    public FlowModel(TelegramClient telegramClient, FlowService flowService, StartCommand startCommand, AccountService accountService) {
         super(telegramClient, FlowContext.CONTEXT_NAME);
         this.flowService = flowService;
         this.startCommand = startCommand;
+        this.accountService = accountService;
     }
 
     @Override
     protected ModelResult<Context> handleCallbackImpl(CallbackQuery callback, FlowContext context) throws TelegramApiException {
-        Callback data = Callback.valueOf(callback.getData());
+        String[] callbackData = callback.getData().split(":");
+        final String callbackPayload = callbackData.length == 1 ? "" : callbackData[1];
+        Callback data = Callback.valueOf(callbackData[0]);
         return switch (data) {
             case CHANGE_SIGN -> {
                 if (context.getAmount().signum() == 0) {
@@ -55,8 +70,41 @@ public final class FlowModel extends AbstractModel<FlowContext> {
                 context.setAmount(context.getAmount().negate());
                 yield ModelResult.editMessage(context);
             }
+            case SET_ACCOUNT -> {
+                context.setAccountId(Long.decode(callbackPayload));
+                yield ModelResult.editMessage(context);
+            }
             case CHANGE_ACCOUNT -> {
-                yield ModelResult.notChanged();
+                ArrayList<InlineKeyboardRow> keyboard = new ArrayList<>();
+                Optional<Long> favoriteAccountId = accountService.getFavoriteAccountId(context.getUserId());
+                List<Account> allAccounts = accountService.getAllAccounts(context.getUserId());
+                for (Account account : allAccounts) {
+                    String accountName = account.getName();
+                    if (favoriteAccountId.isPresent() && favoriteAccountId.get().equals(account.getAccountId())) {
+                        accountName = FAVORITE_ACCOUNT_STAR + accountName;
+                    }
+                    keyboard.add(new InlineKeyboardRow(
+                                    InlineKeyboardButton.builder()
+                                            .text(accountName)
+                                            .callbackData("%s:0x%x".formatted(Callback.SET_ACCOUNT.name(), account.getAccountId()))
+                                            .build()
+                            )
+                    );
+                }
+                SendMessage sendMessage = SendMessage.builder()
+                        .chatId(context.getChatId())
+                        .text("Выбери счёт")
+                        .replyMarkup(
+                                InlineKeyboardMarkup.builder()
+                                        .keyboard(
+                                                keyboard
+                                        )
+                                        .build()
+                        )
+                        .build();
+                Message execute = telegramClient.execute(sendMessage);
+                context.setMessageId(execute.getMessageId());
+                yield ModelResult.replaceContext(context);
             }
             case ENTER_TIME -> {
                 context.setEnterData(ENTER_TIME.name());

@@ -26,6 +26,7 @@ public class Account {
     @NotBlank
     @Column(length = 60)
     private String name;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private Currency currency;

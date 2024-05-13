@@ -18,6 +18,8 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class StartView extends AbstractView<StartContext> {
+    public static final String FAVORITE_ACCOUNT_STAR = "⭐";
+
     private final UserService userService;
     private final AccountService accountService;
 
@@ -40,7 +42,6 @@ public class StartView extends AbstractView<StartContext> {
         StringBuilder sb = new StringBuilder();
         sb.append("Счета:\n");
         renderAccounts(sb, user);
-        sb.append("\n");
 
         sb.append("\n");
         sb.append("Введи число для быстрого создания расхода");
@@ -60,13 +61,14 @@ public class StartView extends AbstractView<StartContext> {
     private void renderAccounts(StringBuilder sb, User user) {
         for (Account account : user.getAccounts()) {
             if (Objects.equals(user.getFavoriteAccountId(), account.getAccountId())) {
-                sb.append("⭐");
+                sb.append(FAVORITE_ACCOUNT_STAR);
             }
             sb.append(account.getName());
             sb.append(": ");
             BigDecimal bigDecimal = accountService.calcBalance(account.getAccountId());
             sb.append(bigDecimal.toPlainString());
             sb.append(account.getCurrency().getCurrencySymbol());
+            sb.append("\n");
         }
     }
 
@@ -75,7 +77,7 @@ public class StartView extends AbstractView<StartContext> {
                 InlineKeyboardButton
                         .builder()
                         .text("Добавить расход/доход")
-                        .callbackData(StartModel.CREATE_FLOW)
+                        .callbackData(StartModel.Callback.CREATE_FLOW.name())
                         .build()
         );
     }
@@ -85,7 +87,7 @@ public class StartView extends AbstractView<StartContext> {
                 InlineKeyboardButton
                         .builder()
                         .text("Перевод")
-                        .callbackData("transaction")
+                        .callbackData(StartModel.Callback.CREATE_TRANSACTION.name())
                         .build()
         );
     }
@@ -95,7 +97,7 @@ public class StartView extends AbstractView<StartContext> {
                 InlineKeyboardButton
                         .builder()
                         .text("Управление счетами")
-                        .callbackData("account setting")
+                        .callbackData(StartModel.Callback.ACCOUNT_MANAGEMENT.name())
                         .build()
         );
     }

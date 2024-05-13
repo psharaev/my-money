@@ -60,6 +60,11 @@ public class UserService extends Service<UserService> {
     }
 
     @Transactional
+    public void setUserFavoriteAccount(long userId, long accountId) {
+        userRepository.setUserFavoriteAccountId(userId, accountId);
+    }
+
+    @Transactional
     public void deleteUser(long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
