@@ -2,12 +2,13 @@ package ru.psharaev.mymoney.core;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.psharaev.mymoney.core.entity.Flow;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.psharaev.mymoney.core.entity.Flow;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -27,6 +28,10 @@ public class FlowService {
                 .build();
 
         flowRepository.save(flow);
+    }
+
+    public List<Flow> getAllFlows(long userId) {
+        return flowRepository.findAllByUserId(userId);
     }
 
     public void deleteFlow(long flowId) {

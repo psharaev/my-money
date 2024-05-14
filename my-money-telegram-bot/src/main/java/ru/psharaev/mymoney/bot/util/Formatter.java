@@ -6,9 +6,7 @@ import ru.psharaev.mymoney.core.entity.Currency;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -27,12 +25,18 @@ public class Formatter {
             "🕗", "🕣", "🕘", "🕤",
             "🕙", "🕥", "🕚", "🕦"
     };
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            .withZone(ZoneOffset.UTC);
 
     public static String formatAccountName(Optional<Long> favoriteAccountId, Account account) {
         if (favoriteAccountId.isPresent() && favoriteAccountId.get().equals(account.getAccountId())) {
             return StartView.FAVORITE_ACCOUNT_STAR + account.getName();
         }
         return account.getName();
+    }
+
+    public static String getCurrentDate() {
+        return DATE_TIME_FORMATTER.format(Instant.now());
     }
 
     public static String formatAmount(BigDecimal amount, Currency currency) {

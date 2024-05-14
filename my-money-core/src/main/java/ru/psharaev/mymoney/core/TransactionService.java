@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.psharaev.mymoney.core.entity.Flow;
 import ru.psharaev.mymoney.core.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,5 +30,9 @@ public class TransactionService {
                 .description(description)
                 .build();
         return transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> getAllTransactions(long userId) {
+        return transactionRepository.findAllByUserId(userId);
     }
 }

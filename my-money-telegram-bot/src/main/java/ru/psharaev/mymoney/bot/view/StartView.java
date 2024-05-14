@@ -55,6 +55,7 @@ public class StartView extends AbstractView<StartContext> {
                 .keyboardRow(renderKeyboardFlow())
                 .keyboardRow(renderKeyboardTransaction())
                 .keyboardRow(renderKeyboardAccountsSettings())
+                .keyboardRow(renderUnloadData())
                 .build();
     }
 
@@ -98,6 +99,16 @@ public class StartView extends AbstractView<StartContext> {
                         .builder()
                         .text("Управление счетами")
                         .callbackData(StartModel.Callback.ACCOUNT_MANAGEMENT.name())
+                        .build()
+        );
+    }
+
+    private InlineKeyboardRow renderUnloadData() {
+        return new InlineKeyboardRow(
+                InlineKeyboardButton
+                        .builder()
+                        .text("Выгрузить таблицу")
+                        .callbackData(StartModel.Callback.UNLOAD_TABLE.name())
                         .build()
         );
     }
