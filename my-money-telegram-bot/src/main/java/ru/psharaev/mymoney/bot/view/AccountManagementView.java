@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import ru.psharaev.mymoney.bot.context.AccountManagementContext;
 import ru.psharaev.mymoney.bot.model.AccountManagementModel;
+import ru.psharaev.mymoney.bot.util.Formatter;
 import ru.psharaev.mymoney.core.AccountService;
 import ru.psharaev.mymoney.core.entity.Account;
 
@@ -66,10 +67,7 @@ public class AccountManagementView extends AbstractView<AccountManagementContext
         for (Account account : cache.getAccounts()) {
             sb.append(number)
                     .append(". ");
-            if (cache.isFavoriteAccountId(account.getAccountId())) {
-                sb.append(FAVORITE_ACCOUNT_STAR);
-            }
-            sb.append(account.getName());
+            sb.append(Formatter.formatAccountName(cache.favoriteAccountId, account));
             sb.append(": ");
             BigDecimal bigDecimal = accountService.calcBalance(account.getAccountId());
             sb.append(bigDecimal.toPlainString());
@@ -96,7 +94,7 @@ public class AccountManagementView extends AbstractView<AccountManagementContext
 
             InlineKeyboardRow row = new InlineKeyboardRow();
 
-            if (!cache.isFavoriteAccountId(account.getAccountId())) {
+            if (!(cache.favoriteAccountId.isPresent() && cache.favoriteAccountId.get().equals(account.getAccountId()))) {
                 row.add(
                         InlineKeyboardButton
                                 .builder()
@@ -142,9 +140,5 @@ public class AccountManagementView extends AbstractView<AccountManagementContext
     private static final class Cache {
         private final List<Account> accounts;
         private final Optional<Long> favoriteAccountId;
-
-        private boolean isFavoriteAccountId(long accountId) {
-            return favoriteAccountId.isPresent() && favoriteAccountId.get() == accountId;
-        }
     }
 }

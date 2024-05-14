@@ -1,16 +1,14 @@
 package ru.psharaev.mymoney.bot.model;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.psharaev.mymoney.bot.Presenter;
-import ru.psharaev.mymoney.bot.context.AccountManagementContext;
-import ru.psharaev.mymoney.bot.context.Context;
-import ru.psharaev.mymoney.bot.context.FlowContext;
-import ru.psharaev.mymoney.bot.context.StartContext;
+import ru.psharaev.mymoney.bot.context.*;
 import ru.psharaev.mymoney.bot.util.Parser;
 import ru.psharaev.mymoney.core.AccountService;
 import ru.psharaev.mymoney.core.CategoryService;
@@ -52,6 +50,13 @@ public final class StartModel extends AbstractModel<StartContext> {
                 }
                 yield ModelResult.editMessage(createFlow(context, context.getFavoriteAccountId(), BigDecimal.ZERO));
             }
+            case CREATE_TRANSACTION -> {
+                if (context.getFavoriteAccountId() == null) {
+                    sendText(context.getChatId(), "Нет предпочитаемого счёта, для создания перевода. Зайди в настройки аккаунта и назначь предпочитаемый счёт.");
+                    yield ModelResult.notChanged();
+                }
+                yield ModelResult.editMessage(createTransaction(context));
+            }
             case ACCOUNT_MANAGEMENT -> {
                 yield ModelResult.editMessage(createAccountManagement(context));
             }
@@ -60,6 +65,22 @@ public final class StartModel extends AbstractModel<StartContext> {
                 yield notChanged();
             }
         };
+    }
+
+    private TransactionContext createTransaction(StartContext context) {
+        return new TransactionContext(
+                context.getUserId(),
+                context.getChatId(),
+                context.getMessageId(),
+                context.getFavoriteAccountId(),
+                context.getFavoriteAccountId(),
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                Instant.now().atOffset(context.getTimezone()),
+                getCategory(context.getFavoriteCategoryFlowId()),
+                "",
+                ""
+        );
     }
 
     private AccountManagementContext createAccountManagement(StartContext context) {

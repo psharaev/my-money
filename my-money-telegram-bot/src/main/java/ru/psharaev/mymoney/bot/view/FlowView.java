@@ -8,14 +8,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.psharaev.mymoney.bot.context.FlowContext;
 import ru.psharaev.mymoney.bot.model.FlowModel;
 import ru.psharaev.mymoney.bot.util.Formatter;
-import ru.psharaev.mymoney.bot.util.Parser;
 import ru.psharaev.mymoney.core.AccountService;
 import ru.psharaev.mymoney.core.entity.Account;
 
 import java.util.List;
 import java.util.Optional;
-
-import static ru.psharaev.mymoney.bot.view.StartView.FAVORITE_ACCOUNT_STAR;
 
 @Slf4j
 @Component
@@ -78,11 +75,8 @@ public class FlowView extends AbstractView<FlowContext> {
 
         sb.append("💳Счёт: ");
         Account account = accountService.getAccount(context.getAccountId());
-        Optional<Long> favoriteAccountIdOptional = accountService.getFavoriteAccountId(context.getUserId());
-        if (favoriteAccountIdOptional.isPresent() && favoriteAccountIdOptional.get().equals(context.getAccountId())) {
-            sb.append(FAVORITE_ACCOUNT_STAR);
-        }
-        sb.append(account.getName());
+        Optional<Long> favoriteAccountId = accountService.getFavoriteAccountId(context.getUserId());
+        sb.append(Formatter.formatAccountName(favoriteAccountId, account));
         sb.append("\n");
 
         if (context.getAmount().signum() <= 0) {
@@ -91,8 +85,7 @@ public class FlowView extends AbstractView<FlowContext> {
             sb.append("🤑Доход: ");
         }
 
-        sb.append(Parser.formatAmount(context.getAmount().abs()));
-        sb.append(account.getCurrency().getCurrencySymbol());
+        sb.append(Formatter.formatAmount(context.getAmount().abs(), account.getCurrency()));
         sb.append("\n");
 
         sb.append(Formatter.getEmojiTime(context.getTime().toZonedDateTime()));

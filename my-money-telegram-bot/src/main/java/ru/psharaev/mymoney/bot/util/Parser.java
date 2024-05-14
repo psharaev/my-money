@@ -37,7 +37,7 @@ public class Parser {
     private static final Clock CLOCK = Clock.systemUTC();
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("[dd.MM[.yyyy]][ ][HH[:mm]]");
-    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
+
 
     public static String nowByPattern(ZoneOffset offset) {
         return DATE_TIME_FORMATTER.format(Instant.now().atOffset(offset));
@@ -56,11 +56,6 @@ public class Parser {
                 .toFormatter();
 
         return LocalDateTime.parse(dateTime, fullDateWithoutYear).atOffset(offset);
-    }
-
-    public static String formatAmount(BigDecimal amount) {
-        amount.toPlainString();
-        return DECIMAL_FORMAT.format(amount);
     }
 
     public static BigDecimal parseExpression(String exp) {

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = FlowContext.class, name = FlowContext.CONTEXT_NAME),
         @JsonSubTypes.Type(value = StartContext.class, name = StartContext.CONTEXT_NAME),
+        @JsonSubTypes.Type(value = TransactionContext.class, name = TransactionContext.CONTEXT_NAME),
         @JsonSubTypes.Type(value = AccountManagementContext.class, name = AccountManagementContext.CONTEXT_NAME),
 })
 public interface Context {

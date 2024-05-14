@@ -15,6 +15,7 @@ import ru.psharaev.mymoney.bot.context.Context;
 import ru.psharaev.mymoney.bot.context.FlowContext;
 import ru.psharaev.mymoney.bot.context.StartContext;
 import ru.psharaev.mymoney.bot.model.command.StartCommand;
+import ru.psharaev.mymoney.bot.util.Formatter;
 import ru.psharaev.mymoney.bot.util.Parser;
 import ru.psharaev.mymoney.core.AccountService;
 import ru.psharaev.mymoney.core.FlowService;
@@ -30,7 +31,6 @@ import java.util.Optional;
 
 import static ru.psharaev.mymoney.bot.model.FlowModel.Callback.*;
 import static ru.psharaev.mymoney.bot.model.ModelResult.notChanged;
-import static ru.psharaev.mymoney.bot.view.StartView.FAVORITE_ACCOUNT_STAR;
 
 @Slf4j
 @Component
@@ -65,6 +65,7 @@ public final class FlowModel extends AbstractModel<FlowContext> {
         return switch (data) {
             case CHANGE_SIGN -> {
                 if (context.getAmount().signum() == 0) {
+                    sendText(context.getChatId(), "Ой, расход равен нулю, поэтому не могу поменять на доход. Введи число");
                     yield ModelResult.notChanged();
                 }
                 context.setAmount(context.getAmount().negate());
@@ -79,13 +80,9 @@ public final class FlowModel extends AbstractModel<FlowContext> {
                 Optional<Long> favoriteAccountId = accountService.getFavoriteAccountId(context.getUserId());
                 List<Account> allAccounts = accountService.getAllAccounts(context.getUserId());
                 for (Account account : allAccounts) {
-                    String accountName = account.getName();
-                    if (favoriteAccountId.isPresent() && favoriteAccountId.get().equals(account.getAccountId())) {
-                        accountName = FAVORITE_ACCOUNT_STAR + accountName;
-                    }
                     keyboard.add(new InlineKeyboardRow(
                                     InlineKeyboardButton.builder()
-                                            .text(accountName)
+                                            .text(Formatter.formatAccountName(favoriteAccountId, account))
                                             .callbackData("%s:0x%x".formatted(Callback.SET_ACCOUNT.name(), account.getAccountId()))
                                             .build()
                             )
