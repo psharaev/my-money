@@ -123,8 +123,7 @@ public final class StartModel extends AbstractModel<StartContext> {
         try {
             amount = Parser.parseExpression(text);
         } catch (MymoneyUserBadArgumentsException e) {
-            sendText(msg.getChatId(), "Не удалось разобрать число или выражение для быстрого ввода расхода. " + e.getMessage());
-            log.error("Fail parse expression", e);
+            sendText(msg.getChatId(), "Не удалось разобрать число или выражение для быстрого ввода расхода.");
             return notChanged();
         }
         return ModelResult.editMessage(createFlow(context, context.getFavoriteAccountId(), amount.negate()));

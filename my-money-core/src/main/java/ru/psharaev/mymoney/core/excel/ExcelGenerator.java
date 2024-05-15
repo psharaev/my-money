@@ -3,6 +3,7 @@ package ru.psharaev.mymoney.core.excel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import ru.psharaev.mymoney.core.AccountService;
@@ -19,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,7 +39,7 @@ public class ExcelGenerator {
     private final Map<Long, String> categories = new ConcurrentHashMap<>();
 
     public InputStream generate(long userId) {
-        try (Workbook workbook = new XSSFWorkbook()) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             generate(userId, workbook);
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -48,10 +50,10 @@ public class ExcelGenerator {
         }
     }
 
-    private void generate(long userId, Workbook workbook) {
-        generateAccounts(userId, workbook.createSheet("Accounts"));
-        generateFlows(userId, workbook.createSheet("Flows"));
-        generateTransactions(userId, workbook.createSheet("Transactions"));
+    private void generate(long userId, XSSFWorkbook workbook) {
+        List<Account> accounts = generateAccounts(userId, workbook.createSheet("Accounts"));
+        List<Flow> flows = generateFlows(userId, workbook.createSheet("Flows"));
+        List<Transaction> transactions = generateTransactions(userId, workbook.createSheet("Transactions"));
     }
 
     private String decodeCategory(long categoryId) {
@@ -76,13 +78,14 @@ public class ExcelGenerator {
         return "unknown";
     }
 
-    private void generateAccounts(long userId, Sheet accounts) {
+    private List<Account> generateAccounts(long userId, XSSFSheet accounts) {
         Row header = accounts.createRow(0);
 
         generateHeader(header, "id", "name", "currency");
 
         int rowNumber = 1;
-        for (Account account : accountService.getAllAccounts(userId)) {
+        List<Account> allAccounts = accountService.getAllAccounts(userId);
+        for (Account account : allAccounts) {
             Row row = accounts.createRow(rowNumber++);
 
             int colNumber = 0;
@@ -95,15 +98,17 @@ public class ExcelGenerator {
             row.createCell(colNumber++, CellType.STRING)
                     .setCellValue(account.getCurrency().getCurrencyCode());
         }
+        return allAccounts;
     }
 
-    private void generateFlows(long userId, Sheet flows) {
+    private List<Flow> generateFlows(long userId, XSSFSheet flows) {
         Row header = flows.createRow(0);
 
         generateHeader(header, "id", "account_id", "amount", "time", "category", "description");
 
         int rowNumber = 1;
-        for (Flow flow : flowService.getAllFlows(userId)) {
+        List<Flow> allFlows = flowService.getAllFlows(userId);
+        for (Flow flow : allFlows) {
             Row row = flows.createRow(rowNumber++);
 
             int colNumber = 0;
@@ -126,14 +131,16 @@ public class ExcelGenerator {
             row.createCell(colNumber++, CellType.STRING)
                     .setCellValue(flow.getDescription());
         }
+        return allFlows;
     }
 
-    private void generateTransactions(long userId, Sheet transactions) {
+    private List<Transaction> generateTransactions(long userId, XSSFSheet transactions) {
         Row header = transactions.createRow(0);
 
         generateHeader(header, "id", "from_account_id", "to_account_id", "from_amount", "to_amount", "time", "category", "description");
         int rowNumber = 1;
-        for (Transaction flow : transactionService.getAllTransactions(userId)) {
+        List<Transaction> allTransactions = transactionService.getAllTransactions(userId);
+        for (Transaction flow : allTransactions) {
             Row row = transactions.createRow(rowNumber++);
 
             int colNumber = 0;
@@ -161,6 +168,7 @@ public class ExcelGenerator {
             row.createCell(colNumber++, CellType.STRING)
                     .setCellValue(flow.getDescription());
         }
+        return allTransactions;
     }
 
     private static void generateHeader(Row header, String... names) {

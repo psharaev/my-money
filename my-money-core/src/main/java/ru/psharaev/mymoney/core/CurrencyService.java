@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import ru.psharaev.mymoney.core.entity.Currency;
 import ru.psharaev.mymoney.core.entity.CurrencyPair;
+import ru.psharaev.mymoney.core.entity.Money;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,7 +20,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import static ru.psharaev.mymoney.core.entity.Currency.*;
+import static ru.psharaev.mymoney.core.entity.Currency.CNY;
+import static ru.psharaev.mymoney.core.entity.Currency.EUR;
+import static ru.psharaev.mymoney.core.entity.Currency.HKD;
+import static ru.psharaev.mymoney.core.entity.Currency.RUB;
+import static ru.psharaev.mymoney.core.entity.Currency.USD;
 
 @Slf4j
 @Service
@@ -105,6 +110,21 @@ public class CurrencyService {
         }
 
         this.exchangeRates = m;
+    }
+
+    public Money convert(Currency to, Money... moneys) {
+        BigDecimal res = BigDecimal.ZERO;
+        for (Money money : moneys) {
+            Currency from = money.currency();
+            if (from == to) {
+                res = res.add(money.amount());
+            } else {
+                res = res.add(
+                        money.amount().multiply(exchangeRates.get(from).get(to))
+                );
+            }
+        }
+        return new Money(res, to);
     }
 
     public BigDecimal convert(BigDecimal amount, Currency from, Currency to) {

@@ -3,6 +3,7 @@ package ru.psharaev.mymoney.bot.util;
 import ru.psharaev.mymoney.bot.view.StartView;
 import ru.psharaev.mymoney.core.entity.Account;
 import ru.psharaev.mymoney.core.entity.Currency;
+import ru.psharaev.mymoney.core.entity.Money;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -37,6 +38,10 @@ public class Formatter {
 
     public static String getCurrentDate() {
         return DATE_TIME_FORMATTER.format(Instant.now());
+    }
+
+    public static String formatMoney(Money money) {
+        return formatAmount(money.amount(), money.currency());
     }
 
     public static String formatAmount(BigDecimal amount, Currency currency) {
