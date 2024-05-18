@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,8 @@ import ru.psharaev.mymoney.bot.MyMoneyTelegramBot;
 public class BotConfig {
     @NotBlank
     private final String token;
+    @NotNull
+    private final RedisConfig redis;
 
     @Bean
     public TelegramBotsLongPollingApplication setToken(MyMoneyTelegramBot myMoneyTelegramBot) throws TelegramApiException {
@@ -50,7 +53,7 @@ public class BotConfig {
 
     @Bean
     public JedisPool jedisConnectionFactory() {
-        return new JedisPool(buildPoolConfig(), "localhost", 16379);
+        return new JedisPool(buildPoolConfig(), redis.getUrl());
     }
 
     private static JedisPoolConfig buildPoolConfig() {
